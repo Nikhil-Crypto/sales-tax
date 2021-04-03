@@ -8,4 +8,23 @@
     <h3 class="">Please upload a text(.txt) file with items to generate a receipt:</h3>
     <input type="file" (change)="onChange($event.target.files)">
   </div>
+
+  <div *ngIf="checkoutItems.length > 0" class="">
+    <h3>Here's your receipt:</h3>
+    <ul style="list-style-type:none;">
+      <li *ngFor="let item of checkoutItems">
+        <pre>{{ item.name }}: {{ item.price.toFixed(2) }}</pre>
+      </li>
+      <li>
+        <pre>Sales tax: {{ totalSalesTax.toFixed(2) }}</pre>
+      </li>
+      <li>
+        <pre>Total: {{ total.toFixed(2) }}</pre>
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="checkoutItems.length == 0" class="">
+    Please select a file
+  </div>
 </div>

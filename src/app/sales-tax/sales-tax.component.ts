@@ -36,6 +36,7 @@ export class SalesTaxComponent {
 
     items.forEach((i: any) => {
       const temp = i.split(' at');
+      receiptItems.push(this.calculateTax(temp))
     });
 
     this.checkoutItems = [...receiptItems]
@@ -53,7 +54,36 @@ export class SalesTaxComponent {
     if (file) {
       fileReader.readAsText(file);
     }
+  }
 
+  calculateTax(item: any) {
+    const originalName = item[0];
+    const originalPrice = Number(item[1]);
+    let taxPercentage = 0;
+    // check if exempt item
+    const exemptMatch = this.exemptItems.filter((item) => {
+      return originalName.toLowerCase().includes(item.toLowerCase());
+    });
+    if (exemptMatch.length == 0) {
+      taxPercentage += 10;
+    }
+    // check if imported
+    const importedMatch = this.itemTypeMap.filter((item) => {
+      return originalName.toLowerCase().includes(item.toLowerCase());
+    });
+    if (importedMatch.length) {
+      taxPercentage += 5;
+    }
+    const temp = (taxPercentage * originalPrice) / 100;
+    const roundedTax = Math.ceil(temp / 0.05) * 0.05;
+    const itemTotal = originalPrice + roundedTax;
+    this.totalSalesTax += roundedTax;
+    this.total += itemTotal;
+    const obj = {
+      name: item[0],
+      price: itemTotal
+    }
+    return obj;
   }
 
 }
